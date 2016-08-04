@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane fx:id="parentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/8.0.102-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.imesha.imageprocessor.controllers.MainController">
+    <children>
+        <MenuBar prefHeight="29.0" prefWidth="670.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="openMenuItem" mnemonicParsing="false" text="Open" />
+                        <MenuItem mnemonicParsing="false" text="Close" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <ImageView fx:id="imageView" fitHeight="185.0" fitWidth="251.0" layoutY="29.0" />
+      <Button fx:id="convertToGrayButton" layoutX="524.0" layoutY="37.0" mnemonicParsing="false" text="Convert to Gray" />
+      <Button fx:id="downSampleButton" layoutX="524.0" layoutY="72.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="122.0" text="Down Sample" />
+      <ImageView fx:id="previousImageView" fitHeight="185.0" fitWidth="251.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="upSampleButton" layoutX="524.0" layoutY="109.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="122.0" text="Up Sample" />
+      <ImageView fx:id="additionalImageView" fitHeight="174.0" fitWidth="251.0" layoutX="263.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="messageLabel" layoutX="514.0" layoutY="243.0" prefHeight="156.0" prefWidth="151.0" />
+    </children>
+</Pane>
