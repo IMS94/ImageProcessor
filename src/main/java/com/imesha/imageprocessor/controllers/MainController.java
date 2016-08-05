@@ -1,8 +1,8 @@
 package com.imesha.imageprocessor.controllers;
 
-import com.imesha.imageprocessor.core.ImageAnalyser;
-import com.imesha.imageprocessor.core.ImageConverter;
-import com.imesha.imageprocessor.core.ImageSampler;
+import com.imesha.imageprocessor.util.ImageAnalyser;
+import com.imesha.imageprocessor.util.ImageConverter;
+import com.imesha.imageprocessor.util.ImageSampler;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -22,6 +22,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Formatter;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -53,11 +55,7 @@ public class MainController implements Initializable {
     private ImageView additionalImageView;
 
     @FXML
-    private Button convertToGrayButton;
-    @FXML
-    private Button downSampleButton;
-    @FXML
-    private Button upSampleButton;
+    private Button processButton;
 
     @FXML
     private Label messageLabel;
@@ -67,20 +65,45 @@ public class MainController implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         setOpenMenuItemActionListener();
-        setConvertToGrayButtonActionListener();
-        setDownSampleButtonActionListener();
-        setUpSampleButtonActionListener();
-        setupUI();
+        setProcessButtonActionListener();
     }
 
-    /**
-     * Initially hide all the buttons.
-     */
-    private void setupUI() {
-        downSampleButton.setVisible(false);
-        upSampleButton.setVisible(false);
-        convertToGrayButton.setVisible(false);
-        messageLabel.setText("");
+
+    private void setProcessButtonActionListener() {
+        this.processButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                new Thread() {
+                    public void run() {
+                        try {
+                            // 1. Convert the image to gray scale and show in UI
+                            BufferedImage grayImage = ImageConverter.converToGrayScale(bufferedImage);
+                            bufferedImage = grayImage;
+                            originalGrayImage = grayImage;
+                            MainController.showImageInUI(grayImage, imageView);
+                            MainController.showMessage("Converted to Gray Scale", messageLabel);
+
+                            // 2. The image will be down sampled and showed in the UI.
+                            BufferedImage downSampledImage = ImageSampler.downSample(bufferedImage);
+                            bufferedImage = downSampledImage;
+                            MainController.showImageInUI(downSampledImage, previousImageView);
+                            MainController.showMessage("Down sampled", messageLabel);
+
+                            // 3. The down sampled image will then be up sampled
+                            BufferedImage upSampledImage = ImageSampler.upSample(bufferedImage);
+                            bufferedImage = upSampledImage;
+                            MainController.showImageInUI(upSampledImage, additionalImageView);
+                            MainController.showMessage("Up sampled", messageLabel);
+
+                            // 4. Calculate and show the statistics.
+                            calculateAndShowDistortion();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
+        });
     }
 
     private void setOpenMenuItemActionListener() {
@@ -94,89 +117,9 @@ public class MainController implements Initializable {
                 File file = fileChooser.showOpenDialog(parentPane.getScene().getWindow());
                 try {
                     bufferedImage = ImageIO.read(file);
-                    setupUI();
-                    convertToGrayButton.setVisible(true);
                     MainController.showImageInUI(bufferedImage, imageView);
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void setConvertToGrayButtonActionListener() {
-        this.convertToGrayButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                if (bufferedImage != null) {
-                    BufferedImage convertedImage = ImageConverter.converToGrayScale(bufferedImage);
-                    bufferedImage = convertedImage;
-                    // Store the gray image also in the originalGrayImage variable
-                    originalGrayImage = convertedImage;
-
-                    MainController.showImageInUI(convertedImage, imageView);
-                    convertToGrayButton.setVisible(false);
-                    downSampleButton.setVisible(true);
-                }
-            }
-        });
-    }
-
-
-    /**
-     * Sets the listener for the down sample action.
-     * The listener will call the ImageSampler to down sample the image.
-     * In the meantime, progress indicator will be updated to show the progress of sampling process.
-     */
-    private void setDownSampleButtonActionListener() {
-        this.downSampleButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                if (bufferedImage != null) {
-                    // Down Sample the image and then, Update the UI later. Once the down sampled image is returned,
-                    // It will be displayed using the UI thread.
-                    final Thread samplingThread = new Thread() {
-                        public void run() {
-                            try {
-                                final BufferedImage sampledImage = ImageSampler.downSample(bufferedImage);
-                                bufferedImage = sampledImage;
-                                downSampleButton.setVisible(false);
-                                upSampleButton.setVisible(true);
-                                MainController.showImageInUI(sampledImage, previousImageView);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    samplingThread.start();
-                }
-            }
-        });
-    }
-
-
-    /**
-     * Sets the listener to listen for action events on up sample button.
-     * This will call the utility class @{@link ImageSampler} to up sample the image.
-     */
-    private void setUpSampleButtonActionListener() {
-        this.upSampleButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                if (bufferedImage != null) {
-                    // Up Sample the image and then, Update the UI later. Once the up sampled image is returned,
-                    // It will be displayed using the UI thread.
-                    final Thread samplingThread = new Thread() {
-                        public void run() {
-                            try {
-                                final BufferedImage sampledImage = ImageSampler.upSample(bufferedImage);
-                                bufferedImage = sampledImage;
-                                MainController.showImageInUI(sampledImage, additionalImageView);
-                                upSampleButton.setVisible(false);
-                                calculateAndShowDistortion();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    samplingThread.start();
                 }
             }
         });
@@ -188,10 +131,13 @@ public class MainController implements Initializable {
      */
     private void calculateAndShowDistortion() {
         try {
-            int distortion = ImageAnalyser.calculateAverageDistortion(this.originalGrayImage, this.bufferedImage);
+            double distortion = ImageAnalyser.calculateAverageDistortion(this.originalGrayImage, this.bufferedImage);
             System.out.println(distortion);
             double sd = ImageAnalyser.calculateStandardDeviation(this.originalGrayImage, this.bufferedImage);
-            MainController.showMessage("Distortion : \n\t" + distortion + "\nSD : \n\t" + sd, messageLabel);
+            StringBuilder stringBuilder = new StringBuilder();
+            Formatter formatter = new Formatter(stringBuilder, Locale.US);
+            formatter.format("Distortion : \n\t%.2f\nSD : \n\t%.2f", distortion, sd);
+            MainController.showMessage(formatter.toString(), messageLabel);
         } catch (Exception e) {
             e.printStackTrace();
         }

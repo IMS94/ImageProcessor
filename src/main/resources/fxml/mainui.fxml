@@ -31,11 +31,9 @@
             </menus>
         </MenuBar>
         <ImageView fx:id="imageView" fitHeight="185.0" fitWidth="251.0" layoutY="29.0" />
-      <Button fx:id="convertToGrayButton" layoutX="524.0" layoutY="37.0" mnemonicParsing="false" text="Convert to Gray" />
-      <Button fx:id="downSampleButton" layoutX="524.0" layoutY="72.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="122.0" text="Down Sample" />
+      <Button fx:id="processButton" layoutX="524.0" layoutY="37.0" mnemonicParsing="false" text="Process" />
       <ImageView fx:id="previousImageView" fitHeight="185.0" fitWidth="251.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true" />
-      <Button fx:id="upSampleButton" layoutX="524.0" layoutY="109.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="122.0" text="Up Sample" />
-      <ImageView fx:id="additionalImageView" fitHeight="174.0" fitWidth="251.0" layoutX="263.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="additionalImageView" fitHeight="176.0" fitWidth="251.0" layoutX="263.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" />
       <Label fx:id="messageLabel" layoutX="514.0" layoutY="243.0" prefHeight="156.0" prefWidth="151.0" />
     </children>
 </Pane>

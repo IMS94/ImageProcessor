@@ -1,4 +1,4 @@
-package com.imesha.imageprocessor.core;
+package com.imesha.imageprocessor.util;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -20,12 +20,12 @@ import java.awt.image.Raster;
  */
 public class ImageAnalyser {
 
-    public static int calculateAverageDistortion(BufferedImage originalImage, BufferedImage modifiedImage)
+    public static double calculateAverageDistortion(BufferedImage originalImage, BufferedImage modifiedImage)
             throws Exception {
         if (originalImage.getHeight() != modifiedImage.getHeight() ||
                 originalImage.getWidth() != modifiedImage.getWidth())
             throw new Exception("Images cannot be compared");
-        int distortion = 0;
+        double distortion = 0;
         Raster originalImageRaster = originalImage.getRaster();
         Raster modifiedImageRaster = modifiedImage.getRaster();
         for (int i = 0; i < originalImage.getWidth(); i++) {
@@ -34,7 +34,7 @@ public class ImageAnalyser {
                         .abs(originalImageRaster.getSample(i, j, 0) - modifiedImageRaster.getSample(i, j, 0));
             }
         }
-        distortion = (int) ((float) distortion) / (originalImage.getHeight() * originalImage.getWidth());
+        distortion = distortion / (originalImage.getHeight() * originalImage.getWidth());
         return distortion;
     }
 

@@ -1,4 +1,4 @@
-package com.imesha.imageprocessor.core;
+package com.imesha.imageprocessor.util;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
