@@ -22,16 +22,12 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import sun.nio.cs.ext.ExtendedCharsets;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -86,7 +82,7 @@ public class MainController implements Initializable {
                     public void run() {
                         try {
                             // 1. Convert the image to gray scale and show in UI
-                            BufferedImage grayImage = ImageConverter.converToGrayScale(bufferedImage);
+                            BufferedImage grayImage = ImageConverter.convertToGrayScale(bufferedImage);
                             bufferedImage = grayImage;
                             originalGrayImage = ImageUtils.deepCopy(grayImage);
                             MainController.showImageInUI(grayImage, imageView);

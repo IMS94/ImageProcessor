@@ -26,7 +26,7 @@ public class ImageConverter {
      * @param image the image to be converted to gray
      * @return
      */
-    public static BufferedImage converToGrayScale(BufferedImage image) {
+    public static BufferedImage convertToGrayScale(BufferedImage image) {
         BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
         for (int i = 0; i < image.getWidth(); i++) {
             for (int j = 0; j < image.getHeight(); j++) {
