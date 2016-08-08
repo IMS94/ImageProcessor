@@ -25,7 +25,7 @@ public interface ImageCompressor {
      * @param originalImage The image to be compressed
      * @return The compressed image
      */
-    BufferedImage compress(BufferedImage originalImage);
+    CompressedImage compress(BufferedImage originalImage);
 
     /**
      * Decompresses a Image
@@ -33,5 +33,5 @@ public interface ImageCompressor {
      * @param compressedImage Image to be Decompressed
      * @return The decompressed image
      */
-    BufferedImage decompress(BufferedImage compressedImage);
+    BufferedImage decompress(CompressedImage compressedImage);
 }

@@ -3,6 +3,10 @@ package com.imesha.imageprocessor.controllers;
 import com.imesha.imageprocessor.util.ImageAnalyser;
 import com.imesha.imageprocessor.util.ImageConverter;
 import com.imesha.imageprocessor.util.ImageSampler;
+import com.imesha.imageprocessor.util.ImageUtils;
+import com.imesha.imageprocessor.util.compression.CompressedImage;
+import com.imesha.imageprocessor.util.compression.CompressorFactory;
+import com.imesha.imageprocessor.util.compression.ImageCompressor;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -16,12 +20,18 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import sun.nio.cs.ext.ExtendedCharsets;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -78,24 +88,40 @@ public class MainController implements Initializable {
                             // 1. Convert the image to gray scale and show in UI
                             BufferedImage grayImage = ImageConverter.converToGrayScale(bufferedImage);
                             bufferedImage = grayImage;
-                            originalGrayImage = grayImage;
+                            originalGrayImage = ImageUtils.deepCopy(grayImage);
                             MainController.showImageInUI(grayImage, imageView);
                             MainController.showMessage("Converted to Gray Scale", messageLabel);
+                            System.out.println(bufferedImage.getWidth() + "x" + bufferedImage.getHeight());
 
                             // 2. The image will be down sampled and showed in the UI.
                             BufferedImage downSampledImage = ImageSampler.downSample(bufferedImage);
                             bufferedImage = downSampledImage;
                             MainController.showImageInUI(downSampledImage, previousImageView);
                             MainController.showMessage("Down sampled", messageLabel);
+                            System.out.println(bufferedImage.getWidth() + "x" + bufferedImage.getHeight());
 
                             // 3. The down sampled image will then be up sampled
                             BufferedImage upSampledImage = ImageSampler.upSample(bufferedImage);
                             bufferedImage = upSampledImage;
                             MainController.showImageInUI(upSampledImage, additionalImageView);
                             MainController.showMessage("Up sampled", messageLabel);
+                            System.out.println(bufferedImage.getWidth() + "x" + bufferedImage.getHeight());
 
                             // 4. Calculate and show the statistics.
                             calculateAndShowDistortion();
+
+                            //Compress Images
+                            ImageCompressor compressor = CompressorFactory
+                                    .getInstance().getCompressor(CompressorFactory.RUN_LENGTH_CODING);
+                            CompressedImage compressedImage = compressor.compress(originalGrayImage);
+
+                            // Write the compressed image to a file.
+                            byte[] encoding = Base64.encodeBase64(compressedImage.getBinaryRepresentation().getBytes());
+                            FileUtils.writeByteArrayToFile(new File("/tmp/compress.rlc"), encoding);
+
+                            // Decompress the image
+                            BufferedImage decompressedImage = compressor.decompress(compressedImage);
+                            MainController.showImageInUI(decompressedImage, additionalImageView);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -132,7 +158,6 @@ public class MainController implements Initializable {
     private void calculateAndShowDistortion() {
         try {
             double distortion = ImageAnalyser.calculateAverageDistortion(this.originalGrayImage, this.bufferedImage);
-            System.out.println(distortion);
             double sd = ImageAnalyser.calculateStandardDeviation(this.originalGrayImage, this.bufferedImage);
             StringBuilder stringBuilder = new StringBuilder();
             Formatter formatter = new Formatter(stringBuilder, Locale.US);
