@@ -112,14 +112,15 @@ public class MainController implements Initializable {
                             CompressedImage compressedImage = compressor.compress(originalGrayImage);
 
                             // Write the compressed image to a file.
-                            byte[] encoding = Base64.encodeBase64(compressedImage.getBinaryRepresentation().getBytes());
-                            FileUtils.writeByteArrayToFile(new File("/tmp/compress.rlc"), encoding);
+                            FileUtils.writeStringToFile(new File("/tmp/compress.rlc"),
+                                    compressedImage.getBinaryRepresentation());
 
                             // Decompress the image
                             BufferedImage decompressedImage = compressor.decompress(compressedImage);
                             MainController.showImageInUI(decompressedImage, additionalImageView);
 
                         } catch (Exception e) {
+                            System.out.println(e.getMessage());
                             e.printStackTrace();
                         }
                     }
@@ -132,11 +133,12 @@ public class MainController implements Initializable {
         // Open an image, then show the image in the imageView
         openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
-                FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Images", "*.jpg", "*.png");
+                FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Images", "*.*");
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.getExtensionFilters().add(extensionFilter);
                 fileChooser.setTitle("Select an Image to be opened");
                 File file = fileChooser.showOpenDialog(parentPane.getScene().getWindow());
+                if (file == null) return;
                 try {
                     bufferedImage = ImageIO.read(file);
                     MainController.showImageInUI(bufferedImage, imageView);
