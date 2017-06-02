@@ -1,6 +1,4 @@
-package com.imesha.imageprocessor.ui;
-
-/**
+/*
  * The MIT License (MIT)
  * Copyright (c) 2016 2016
  * <p>
@@ -15,6 +13,8 @@ package com.imesha.imageprocessor.ui;
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package com.imesha.imageprocessor.ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

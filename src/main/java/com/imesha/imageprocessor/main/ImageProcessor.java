@@ -1,8 +1,4 @@
-package com.imesha.imageprocessor.main;
-
-import com.imesha.imageprocessor.ui.ImageProcessorUI;
-
-/**
+/*
  * The MIT License (MIT)
  * Copyright (c) 2016 2016
  * <p>
@@ -17,6 +13,11 @@ import com.imesha.imageprocessor.ui.ImageProcessorUI;
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package com.imesha.imageprocessor.main;
+
+import com.imesha.imageprocessor.ui.ImageProcessorUI;
+
 public class ImageProcessor {
     public static void main(String[] args) {
         ImageProcessorUI.main(args);

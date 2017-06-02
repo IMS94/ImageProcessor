@@ -1,8 +1,9 @@
-package com.imesha.imageprocessor.util.compression;
 /*
  * @author imesha
  * @date 8/7/16.
  */
+
+package com.imesha.imageprocessor.util.compression;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
